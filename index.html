@@ -1,0 +1,1221 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Peap Client - kostenloser Minecraft-Launcher und modularer Client fuer Windows. Ohne Microsoft-Anmeldung spielbar.">
+<meta name="color-scheme" content="dark">
+<meta property="og:title" content="Peap Client">
+<meta property="og:description" content="Ein Launcher. Kein Login. Kostenloser Minecraft-Launcher und modularer Client fuer Windows.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="shots/home.png">
+<link rel="icon" href="shots/mark.png" type="image/png">
+<script>window.PEAP_BUILD = {"version":"1.0.0","builtAt":"2026-09-25T20:19:02.249Z","setupPath":"C:\\Users\\memes\\Desktop\\PeapClient\\dist\\PeapClient-Setup.exe"};</script>
+<title>Peap Client</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Public+Sans:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap">
+
+<style>
+/* ==================================================================
+   Peap Client - product site
+   Palette and geometry are taken from the launcher's own design
+   tokens so the page and the app read as one product.
+   ================================================================== */
+
+:root {
+  color-scheme: dark;
+
+  --ground: #07080c;
+  --surface: #0f111a;
+  --raised: #161a26;
+  --sunken: #05060a;
+
+  --line: rgba(255, 255, 255, 0.075);
+  --line-strong: rgba(255, 255, 255, 0.16);
+
+  --text: #e9ebf4;
+  --muted: #949bb4;
+  --dim: #5d6580;
+
+  --violet: #8b5cf6;
+  --indigo: #6366f1;
+  --cyan: #22d3ee;
+  --mint: #34d399;
+
+  --brand: linear-gradient(115deg, #8b5cf6 0%, #6366f1 45%, #22d3ee 100%);
+
+  --display: 'Bricolage Grotesque', 'Segoe UI', system-ui, sans-serif;
+  --body: 'Public Sans', 'Segoe UI', system-ui, sans-serif;
+  --mono: 'JetBrains Mono', 'Cascadia Mono', Consolas, monospace;
+
+  --r-sm: 10px;
+  --r-md: 16px;
+  --r-lg: 24px;
+  --r-xl: 34px;
+
+  --gutter: clamp(18px, 4vw, 56px);
+  --wide: 1180px;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--text);
+  font-family: var(--body);
+  font-size: 16px;
+  line-height: 1.65;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+img { max-width: 100%; display: block; }
+[hidden] { display: none !important; }
+
+a { color: var(--cyan); text-decoration-color: rgba(34, 211, 238, 0.4); text-underline-offset: 3px; }
+a:hover { color: var(--text); }
+
+:focus-visible { outline: 2px solid var(--violet); outline-offset: 3px; border-radius: 4px; }
+
+h1, h2, h3 { font-family: var(--display); font-weight: 800; letter-spacing: -0.025em; text-wrap: balance; margin: 0; }
+p { margin: 0; }
+
+.wrap { width: 100%; max-width: var(--wide); margin-inline: auto; padding-inline: var(--gutter); }
+
+.mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--dim);
+}
+
+/* ---- top bar ------------------------------------------------------ */
+
+.topbar {
+  position: sticky;
+  top: env(safe-area-inset-top, 0px);
+  z-index: 40;
+  background: rgba(7, 8, 12, 0.72);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.3s ease, background 0.3s ease;
+}
+.topbar[data-stuck='true'] { border-bottom-color: var(--line); background: rgba(7, 8, 12, 0.9); }
+
+.topbar__inner {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  height: 66px;
+}
+
+.brand { display: flex; align-items: center; gap: 11px; font-family: var(--display); font-weight: 800; font-size: 17px; letter-spacing: -0.02em; color: var(--text); text-decoration: none; }
+.brand__mark { width: 30px; height: 30px; border-radius: 9px; background: var(--brand); display: grid; place-items: center; box-shadow: 0 4px 14px rgba(99, 102, 241, 0.42); }
+.brand__mark svg { width: 17px; height: 17px; }
+
+.topnav { display: flex; gap: 4px; margin-left: 20px; }
+.topnav a {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 7px 12px;
+  border-radius: var(--r-sm);
+  transition: color 0.18s ease, background 0.18s ease;
+}
+.topnav a:hover { color: var(--text); background: rgba(255, 255, 255, 0.05); }
+
+.topbar__spacer { flex: 1; }
+
+/* ---- buttons ------------------------------------------------------ */
+
+.btn {
+  --glow: rgba(99, 102, 241, 0.45);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-family: var(--body);
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1;
+  padding: 14px 22px;
+  border-radius: var(--r-md);
+  border: 1px solid var(--line-strong);
+  background: rgba(255, 255, 255, 0.045);
+  color: var(--text);
+  cursor: pointer;
+  text-decoration: none;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.18s cubic-bezier(0.2, 0.9, 0.3, 1.2), background 0.2s ease, border-color 0.2s ease, box-shadow 0.25s ease;
+}
+.btn:hover { background: rgba(255, 255, 255, 0.08); border-color: rgba(255, 255, 255, 0.28); transform: translateY(-2px); color: var(--text); }
+.btn:active { transform: translateY(0); }
+
+.btn--primary {
+  background: var(--brand);
+  border-color: transparent;
+  color: #0a0b10;
+  font-weight: 700;
+  box-shadow: 0 10px 34px var(--glow);
+}
+.btn--primary:hover { background: var(--brand); box-shadow: 0 16px 46px var(--glow); color: #0a0b10; }
+.btn--primary::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(100deg, transparent 20%, rgba(255, 255, 255, 0.55) 50%, transparent 80%);
+  transform: translateX(-130%);
+}
+.btn--primary:hover::after { animation: sheen 0.85s ease; }
+@keyframes sheen { to { transform: translateX(130%); } }
+
+.btn--sm { padding: 10px 16px; font-size: 14px; border-radius: var(--r-sm); }
+.btn--lg { padding: 17px 28px; font-size: 16.5px; }
+
+.btn__sub { font-weight: 500; font-size: 12.5px; opacity: 0.72; font-family: var(--mono); }
+
+/* ---- hero --------------------------------------------------------- */
+
+.hero { position: relative; padding-block: clamp(48px, 8vw, 104px) clamp(56px, 9vw, 120px); overflow: hidden; }
+
+.aurora { position: absolute; inset: -30% -10% auto -10%; height: 760px; pointer-events: none; z-index: 0; filter: blur(70px); opacity: 0.55; }
+.aurora span { position: absolute; border-radius: 50%; display: block; }
+.aurora span:nth-child(1) { width: 560px; height: 420px; left: 2%; top: 14%; background: radial-gradient(circle, rgba(139, 92, 246, 0.58), transparent 68%); animation: drift1 22s ease-in-out infinite; }
+.aurora span:nth-child(2) { width: 480px; height: 480px; right: 6%; top: 2%; background: radial-gradient(circle, rgba(34, 211, 238, 0.42), transparent 68%); animation: drift2 26s ease-in-out infinite; }
+.aurora span:nth-child(3) { width: 420px; height: 340px; left: 42%; top: 40%; background: radial-gradient(circle, rgba(99, 102, 241, 0.46), transparent 70%); animation: drift3 30s ease-in-out infinite; }
+
+@keyframes drift1 { 0%, 100% { transform: translate3d(0, 0, 0) scale(1); } 50% { transform: translate3d(70px, 40px, 0) scale(1.12); } }
+@keyframes drift2 { 0%, 100% { transform: translate3d(0, 0, 0) scale(1.05); } 50% { transform: translate3d(-60px, 54px, 0) scale(0.94); } }
+@keyframes drift3 { 0%, 100% { transform: translate3d(0, 0, 0); } 50% { transform: translate3d(40px, -50px, 0); } }
+
+.hero__grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  gap: clamp(28px, 5vw, 64px);
+  align-items: center;
+}
+
+.hero h1 {
+  font-size: clamp(42px, 7.4vw, 82px);
+  line-height: 0.96;
+  margin-block: 18px 22px;
+}
+.hero h1 .accent {
+  background: var(--brand);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.hero__lead { font-size: clamp(16.5px, 1.6vw, 19px); color: var(--muted); max-width: 46ch; }
+
+.hero__cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
+
+.hero__note { margin-top: 18px; font-size: 13px; color: var(--dim); display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+.loaders { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 28px; }
+.chip {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  padding: 6px 11px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--muted);
+}
+.chip--live { color: var(--mint); border-color: rgba(52, 211, 153, 0.34); background: rgba(52, 211, 153, 0.1); }
+
+/* ---- rotating mark ------------------------------------------------ */
+
+.stage { display: grid; place-items: center; perspective: 1000px; min-height: 340px; }
+
+.cube { position: relative; width: 168px; height: 168px; transform-style: preserve-3d; animation: spin 26s linear infinite; }
+@keyframes spin {
+  from { transform: rotateX(-24deg) rotateY(0deg); }
+  to { transform: rotateX(-24deg) rotateY(360deg); }
+}
+.cube__face {
+  position: absolute;
+  inset: 0;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 8px;
+  background: linear-gradient(150deg, rgba(139, 92, 246, 0.92), rgba(34, 211, 238, 0.78));
+  box-shadow: inset 0 0 44px rgba(255, 255, 255, 0.3);
+}
+.cube__face:nth-child(1) { transform: translateZ(84px); }
+.cube__face:nth-child(2) { transform: rotateY(90deg) translateZ(84px); filter: brightness(0.82); }
+.cube__face:nth-child(3) { transform: rotateY(180deg) translateZ(84px); filter: brightness(0.7); }
+.cube__face:nth-child(4) { transform: rotateY(-90deg) translateZ(84px); filter: brightness(0.88); }
+.cube__face:nth-child(5) { transform: rotateX(90deg) translateZ(84px); filter: brightness(1.22); }
+.cube__face:nth-child(6) { transform: rotateX(-90deg) translateZ(84px); filter: brightness(0.5); }
+
+.stage__halo {
+  position: absolute;
+  width: 300px; height: 300px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.34), transparent 66%);
+  filter: blur(22px);
+}
+
+/* ---- stats -------------------------------------------------------- */
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+}
+.stat { background: var(--surface); padding: 26px 22px; }
+.stat__value { font-family: var(--display); font-weight: 800; font-size: clamp(26px, 3.4vw, 38px); line-height: 1.05; font-variant-numeric: tabular-nums; }
+.stat__value .unit { font-size: 0.52em; color: var(--muted); margin-left: 4px; font-weight: 600; }
+.stat__label { font-size: 13px; color: var(--muted); margin-top: 7px; }
+
+/* ---- sections ----------------------------------------------------- */
+
+section { position: relative; }
+.band { padding-block: clamp(56px, 8vw, 104px); }
+.band--surface { background: linear-gradient(180deg, transparent, rgba(255, 255, 255, 0.016) 14%, rgba(255, 255, 255, 0.016) 86%, transparent); }
+
+.head { max-width: 62ch; margin-bottom: clamp(30px, 4vw, 48px); }
+.head h2 { font-size: clamp(28px, 4.2vw, 46px); line-height: 1.06; margin-block: 12px 14px; }
+.head p { color: var(--muted); font-size: 16.5px; }
+
+/* ---- steps -------------------------------------------------------- */
+
+.steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; counter-reset: step; }
+.step { position: relative; padding: 26px 24px 28px; border: 1px solid var(--line); border-radius: var(--r-lg); background: var(--surface); }
+.step__n { font-family: var(--mono); font-size: 12.5px; color: var(--violet); letter-spacing: 0.1em; }
+.step h3 { font-size: 19px; margin-block: 12px 8px; }
+.step p { color: var(--muted); font-size: 14.5px; }
+.step::after {
+  content: '';
+  position: absolute;
+  left: 24px; right: 24px; bottom: 0;
+  height: 2px;
+  background: var(--brand);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.step:hover::after { transform: scaleX(1); }
+
+/* ---- feature grid ------------------------------------------------- */
+
+.features { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.feature {
+  padding: 24px 22px 26px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  background: var(--surface);
+  transition: transform 0.22s ease, border-color 0.22s ease, background 0.22s ease;
+}
+.feature:hover { transform: translateY(-3px); border-color: var(--line-strong); background: var(--raised); }
+.feature__icon { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; background: rgba(139, 92, 246, 0.14); border: 1px solid rgba(139, 92, 246, 0.26); margin-bottom: 15px; }
+.feature__icon svg { width: 20px; height: 20px; stroke: var(--violet); fill: none; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.feature h3 { font-size: 17px; margin-bottom: 7px; }
+.feature p { color: var(--muted); font-size: 14.5px; }
+
+/* ---- screenshot showcase ------------------------------------------ */
+
+.tabs { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 20px; }
+.tab {
+  font-family: var(--body);
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--muted);
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 8px 15px;
+  cursor: pointer;
+  transition: color 0.18s ease, background 0.18s ease, border-color 0.18s ease;
+}
+.tab:hover { color: var(--text); border-color: var(--line-strong); }
+.tab[aria-selected='true'] { color: #0a0b10; background: var(--brand); border-color: transparent; }
+
+.shot {
+  position: relative;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+  background: var(--sunken);
+  box-shadow: 0 40px 90px rgba(0, 0, 0, 0.6);
+}
+/* height:auto is required - the img's height attribute would otherwise win over aspect-ratio and crop the shot. */
+.shot img { width: 100%; height: auto; aspect-ratio: 1420 / 900; }
+.shot__caption {
+  border-top: 1px solid var(--line);
+  padding: 13px 18px;
+  font-size: 13.5px;
+  color: var(--muted);
+  background: var(--surface);
+}
+.shot img.is-swapping { animation: shotIn 0.42s cubic-bezier(0.2, 0.8, 0.2, 1); }
+@keyframes shotIn { from { opacity: 0.25; transform: scale(1.012); } to { opacity: 1; transform: scale(1); } }
+
+/* ---- module list -------------------------------------------------- */
+
+.modules { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.mod { display: flex; gap: 15px; padding: 20px; border: 1px solid var(--line); border-radius: var(--r-md); background: var(--surface); }
+.mod__tag { font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--cyan); white-space: nowrap; padding-top: 3px; min-width: 88px; }
+.mod h3 { font-size: 16px; margin-bottom: 5px; }
+.mod p { color: var(--muted); font-size: 14px; }
+
+/* ---- download ----------------------------------------------------- */
+
+.dl { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+.card {
+  border: 1px solid var(--line);
+  border-radius: var(--r-xl);
+  background: var(--surface);
+  padding: clamp(24px, 3vw, 34px);
+  position: relative;
+  overflow: hidden;
+}
+.card--primary { border-color: rgba(139, 92, 246, 0.4); background: linear-gradient(165deg, rgba(139, 92, 246, 0.1), rgba(15, 17, 26, 0.9) 58%); }
+.card h3 { font-size: 22px; margin-bottom: 8px; }
+.card__lead { color: var(--muted); font-size: 15px; margin-bottom: 20px; }
+.card .btn { width: 100%; }
+
+.facts { list-style: none; margin: 20px 0 0; padding: 0; display: grid; gap: 9px; }
+.facts li { display: flex; justify-content: space-between; gap: 14px; font-size: 13.5px; border-bottom: 1px dashed var(--line); padding-bottom: 8px; }
+.facts li:last-child { border-bottom: 0; padding-bottom: 0; }
+.facts span:first-child { color: var(--dim); }
+.facts span:last-child { font-family: var(--mono); color: var(--text); text-align: right; word-break: break-word; }
+
+.notice {
+  margin-top: 22px;
+  border: 1px solid rgba(251, 191, 36, 0.3);
+  background: rgba(251, 191, 36, 0.09);
+  border-radius: var(--r-md);
+  padding: 16px 18px;
+  font-size: 14px;
+  color: var(--muted);
+}
+.notice strong { color: var(--text); }
+
+.copyrow { display: flex; gap: 8px; align-items: stretch; margin-top: 14px; }
+.copyrow code {
+  flex: 1;
+  font-family: var(--mono);
+  font-size: 12.5px;
+  background: var(--sunken);
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  padding: 11px 13px;
+  color: var(--muted);
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+/* ---- faq ---------------------------------------------------------- */
+
+.faq { display: grid; gap: 10px; max-width: 80ch; }
+.qa { border: 1px solid var(--line); border-radius: var(--r-md); background: var(--surface); overflow: hidden; }
+.qa summary {
+  cursor: pointer;
+  list-style: none;
+  padding: 17px 20px;
+  font-weight: 600;
+  font-size: 15.5px;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: center;
+}
+.qa summary::-webkit-details-marker { display: none; }
+.qa summary::after { content: '+'; font-family: var(--mono); color: var(--violet); font-size: 20px; transition: transform 0.25s ease; }
+.qa[open] summary::after { transform: rotate(45deg); }
+.qa__body { padding: 0 20px 18px; color: var(--muted); font-size: 14.5px; }
+
+/* ---- footer ------------------------------------------------------- */
+
+footer { border-top: 1px solid var(--line); padding-block: 40px 48px; }
+.footer__grid { display: flex; flex-wrap: wrap; gap: 20px; align-items: center; justify-content: space-between; }
+.footer__legal { font-size: 12.5px; color: var(--dim); max-width: 64ch; }
+
+.langtoggle { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; overflow: hidden; }
+.langtoggle button {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  letter-spacing: 0.08em;
+  padding: 7px 12px;
+  background: transparent;
+  border: 0;
+  color: var(--dim);
+  cursor: pointer;
+  transition: background 0.18s ease, color 0.18s ease;
+}
+.langtoggle button[aria-pressed='true'] { background: rgba(255, 255, 255, 0.09); color: var(--text); }
+
+/* ---- reveal ------------------------------------------------------- */
+
+.js .reveal { opacity: 0.001; transform: translateY(16px); }
+.js .reveal.in { opacity: 1; transform: none; transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+  .js .reveal { opacity: 1; transform: none; }
+  .cube { transform: rotateX(-24deg) rotateY(38deg); }
+}
+
+/* ---- responsive --------------------------------------------------- */
+
+@media (max-width: 940px) {
+  .hero__grid { grid-template-columns: minmax(0, 1fr); }
+  .stage { order: -1; min-height: 230px; }
+  .cube { width: 122px; height: 122px; }
+  .cube__face:nth-child(1) { transform: translateZ(61px); }
+  .cube__face:nth-child(2) { transform: rotateY(90deg) translateZ(61px); }
+  .cube__face:nth-child(3) { transform: rotateY(180deg) translateZ(61px); }
+  .cube__face:nth-child(4) { transform: rotateY(-90deg) translateZ(61px); }
+  .cube__face:nth-child(5) { transform: rotateX(90deg) translateZ(61px); }
+  .cube__face:nth-child(6) { transform: rotateX(-90deg) translateZ(61px); }
+  .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .steps, .features, .modules, .dl { grid-template-columns: minmax(0, 1fr); }
+  .topnav { display: none; }
+}
+
+@media (max-width: 560px) {
+  .features { grid-template-columns: minmax(0, 1fr); }
+  .hero__cta .btn { width: 100%; }
+  .mod { flex-direction: column; gap: 8px; }
+  .mod__tag { min-width: 0; }
+}
+</style>
+</head>
+<body>
+
+
+<!-- ================= top bar ================= -->
+<header class="topbar" id="topbar">
+  <div class="wrap topbar__inner">
+    <a class="brand" href="#top">
+      <span class="brand__mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.9" stroke-linejoin="round">
+          <path d="M12 2.6 21 7.4v9.2L12 21.4 3 16.6V7.4Z"></path>
+          <path d="m3 7.4 9 4.8 9-4.8M12 12.2v9.2"></path>
+        </svg>
+      </span>
+      Peap Client
+    </a>
+
+    <nav class="topnav" aria-label="Seitenbereiche">
+      <a href="#features" data-i18n="nav.features">Funktionen</a>
+      <a href="#interface" data-i18n="nav.interface">Oberfläche</a>
+      <a href="#modules" data-i18n="nav.modules">Module</a>
+      <a href="#faq" data-i18n="nav.faq">Fragen</a>
+    </nav>
+
+    <span class="topbar__spacer"></span>
+
+    <div class="langtoggle" role="group" aria-label="Sprache / Language">
+      <button type="button" id="lang-de" aria-pressed="true">DE</button>
+      <button type="button" id="lang-en" aria-pressed="false">EN</button>
+    </div>
+
+    <a class="btn btn--primary btn--sm" href="#download" data-i18n="nav.download">Herunterladen</a>
+  </div>
+</header>
+
+<!-- ================= hero ================= -->
+<section class="hero" id="top">
+  <div class="aurora" aria-hidden="true"><span></span><span></span><span></span></div>
+
+  <div class="wrap hero__grid">
+    <div>
+      <p class="eyebrow" data-i18n="hero.eyebrow">Kostenlos · Windows 10 / 11 · Version 1.0.0</p>
+
+      <h1>
+        <span data-i18n="hero.title1">Ein Launcher.</span><br>
+        <span class="accent" data-i18n="hero.title2">Kein Login.</span>
+      </h1>
+
+      <p class="hero__lead" data-i18n="hero.lead">
+        Peap Client installiert Minecraft, kümmert sich um Java und startet das Spiel — ohne
+        Microsoft-Anmeldung, ohne Konto, ohne Abo. Name eintippen, Version wählen, spielen.
+      </p>
+
+      <div class="hero__cta">
+        <a class="btn btn--primary btn--lg" href="#download" id="hero-download">
+          <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 3v12m0 0 4.5-4.5M12 15l-4.5-4.5"></path><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"></path>
+          </svg>
+          <span data-i18n="hero.cta">Setup herunterladen</span>
+          <span class="btn__sub" id="hero-size">78,6 MB</span>
+        </a>
+        <a class="btn btn--lg" href="#interface" data-i18n="hero.cta2">Oberfläche ansehen</a>
+      </div>
+
+      <p class="hero__note">
+        <span class="chip chip--live" data-i18n="hero.badge">Kein Konto nötig</span>
+        <span data-i18n="hero.note">64-Bit · Node.js wird nicht gebraucht · Quelltext inklusive</span>
+      </p>
+
+      <div class="loaders">
+        <span class="chip">Vanilla</span>
+        <span class="chip">Fabric</span>
+        <span class="chip">Quilt</span>
+        <span class="chip">Forge</span>
+        <span class="chip">NeoForge</span>
+      </div>
+    </div>
+
+    <div class="stage" aria-hidden="true">
+      <div class="stage__halo"></div>
+      <div class="cube">
+        <span class="cube__face"></span><span class="cube__face"></span><span class="cube__face"></span>
+        <span class="cube__face"></span><span class="cube__face"></span><span class="cube__face"></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= stats ================= -->
+<section class="wrap" style="margin-bottom: clamp(48px, 7vw, 88px);">
+  <div class="stats reveal">
+    <div class="stat">
+      <div class="stat__value"><span data-count="3664">3.664</span></div>
+      <div class="stat__label" data-i18n="stat.files">Dateien beim ersten Start geladen</div>
+    </div>
+    <div class="stat">
+      <div class="stat__value"><span data-count="80">80</span><span class="unit">s</span></div>
+      <div class="stat__label" data-i18n="stat.time">für 700 MB, gemessen bei 1.20.1</div>
+    </div>
+    <div class="stat">
+      <div class="stat__value">SHA-1</div>
+      <div class="stat__label" data-i18n="stat.verify">jede Datei geprüft, defekte neu geladen</div>
+    </div>
+    <div class="stat">
+      <div class="stat__value"><span data-count="0">0</span></div>
+      <div class="stat__label" data-i18n="stat.deps">fremde Laufzeit-Pakete im Launcher</div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= steps ================= -->
+<section class="band band--surface" id="start">
+  <div class="wrap">
+    <div class="head reveal">
+      <p class="eyebrow" data-i18n="steps.eyebrow">In drei Schritten</p>
+      <h2 data-i18n="steps.title">Vom Download bis in die Welt</h2>
+      <p data-i18n="steps.lead">Kein Konto anlegen, keine Java-Installation suchen, keine Konfigurationsdatei anfassen.</p>
+    </div>
+
+    <div class="steps">
+      <article class="step reveal">
+        <div class="step__n">01</div>
+        <h3 data-i18n="step1.title">Setup öffnen</h3>
+        <p data-i18n="step1.body">Doppelklick auf <span class="mono">PeapClient-Setup.exe</span>. Der Installer legt den Launcher an, erstellt Verknüpfungen und startet ihn.</p>
+      </article>
+      <article class="step reveal">
+        <div class="step__n">02</div>
+        <h3 data-i18n="step2.title">Namen wählen</h3>
+        <p data-i18n="step2.body">Der Launcher schlägt deinen Windows-Namen vor. Ein Klick auf <em>Play as …</em> — das war die ganze Anmeldung.</p>
+      </article>
+      <article class="step reveal">
+        <div class="step__n">03</div>
+        <h3 data-i18n="step3.title">Version wählen, spielen</h3>
+        <p data-i18n="step3.body">Minecraft-Version und Loader aussuchen, <em>Play</em> drücken. Alles Weitere — Dateien, Java, Start — macht der Launcher.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ================= features ================= -->
+<section class="band" id="features">
+  <div class="wrap">
+    <div class="head reveal">
+      <p class="eyebrow" data-i18n="feat.eyebrow">Was drin ist</p>
+      <h2 data-i18n="feat.title">Ein vollständiger Client, kein Startknopf</h2>
+      <p data-i18n="feat.lead">Alles, was ein Launcher übernehmen sollte — und ein Client-Teil, der im Spiel sichtbar wird.</p>
+    </div>
+
+    <div class="features">
+      <article class="feature reveal">
+        <div class="feature__icon"><svg viewBox="0 0 24 24"><path d="M12 3a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z"></path><path d="M4 21a8 8 0 0 1 16 0"></path></svg></div>
+        <h3 data-i18n="f1.t">Ohne Anmeldung spielen</h3>
+        <p data-i18n="f1.b">Ein Offline-Profil reicht für Einzelspieler und LAN. Microsoft-Login kannst du jederzeit später hinzufügen.</p>
+      </article>
+
+      <article class="feature reveal">
+        <div class="feature__icon"><svg viewBox="0 0 24 24"><path d="M8 3h8l4 5-8 13L4 8Z"></path><path d="M8 3 6 8h12l-2-5"></path></svg></div>
+        <h3 data-i18n="f2.t">Java erledigt sich selbst</h3>
+        <p data-i18n="f2.b">Der Launcher erkennt vorhandene Java-Versionen und lädt die passende nach — 1.8 braucht eine andere als 1.21.</p>
+      </article>
+
+      <article class="feature reveal">
+        <div class="feature__icon"><svg viewBox="0 0 24 24"><path d="M3 7h18M3 12h18M3 17h18"></path><path d="M7 4v16"></path></svg></div>
+        <h3 data-i18n="f3.t">Alle großen Loader</h3>
+        <p data-i18n="f3.b">Vanilla, Fabric, Quilt, Forge und NeoForge. Forge und NeoForge werden mit dem offiziellen Installer eingerichtet.</p>
+      </article>
+
+      <article class="feature reveal">
+        <div class="feature__icon"><svg viewBox="0 0 24 24"><path d="M12 3v12m0 0 4.5-4.5M12 15l-4.5-4.5"></path><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"></path></svg></div>
+        <h3 data-i18n="f4.t">Download-Manager, der sich benimmt</h3>
+        <p data-i18n="f4.b">Tempo, Restzeit, Abbrechen, automatische Wiederholung bei Verbindungsabbrüchen und SHA-1-Prüfung für jede Datei.</p>
+      </article>
+
+      <article class="feature reveal">
+        <div class="feature__icon"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"></rect><path d="M7 9h5M7 13h3"></path></svg></div>
+        <h3 data-i18n="f5.t">HUD-Editor zum Ziehen</h3>
+        <p data-i18n="f5.b">Elemente verschieben, skalieren, ein- und ausblenden. Mehrere Layouts speichern und umschalten.</p>
+      </article>
+
+      <article class="feature reveal">
+        <div class="feature__icon"><svg viewBox="0 0 24 24"><path d="M4 6h10M4 12h16M4 18h7"></path><circle cx="18" cy="6" r="2"></circle><circle cx="14" cy="18" r="2"></circle></svg></div>
+        <h3 data-i18n="f6.t">Module mit Schaltern</h3>
+        <p data-i18n="f6.b">Performance, HUD, Optik, Komfort und Navigation. Jedes Modul einzeln an- und ausschaltbar, mit eigenen Einstellungen.</p>
+      </article>
+
+      <article class="feature reveal">
+        <div class="feature__icon"><svg viewBox="0 0 24 24"><path d="M5 4h14v16H5z"></path><path d="M8 9h8M8 13h6M8 17h4"></path></svg></div>
+        <h3 data-i18n="f7.t">Logs und Absturzanalyse</h3>
+        <p data-i18n="f7.b">Spiel-Log direkt im Launcher, Exit-Codes werden in verständliche Ursachen übersetzt statt in Hex-Zahlen.</p>
+      </article>
+
+      <article class="feature reveal">
+        <div class="feature__icon"><svg viewBox="0 0 24 24"><path d="M12 3 5 6v6c0 4.2 2.9 7.7 7 9 4.1-1.3 7-4.8 7-9V6Z"></path><path d="m9.5 12 1.8 1.8L15 10"></path></svg></div>
+        <h3 data-i18n="f8.t">Sitzungen sicher abgelegt</h3>
+        <p data-i18n="f8.b">Falls du dich doch anmeldest: Tokens landen verschlüsselt über Windows-DPAPI auf der Platte, nie im Klartext.</p>
+      </article>
+
+      <article class="feature reveal">
+        <div class="feature__icon"><svg viewBox="0 0 24 24"><path d="M4 7h16v12H4z"></path><path d="M4 7V5h7l2 2"></path></svg></div>
+        <h3 data-i18n="f9.t">Getrennte Instanzen</h3>
+        <p data-i18n="f9.b">Jedes Profil hat eigenen Spielordner, eigenes RAM-Limit und eigene JVM-Argumente. Mods bleiben, wo sie hingehören.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ================= interface ================= -->
+<section class="band band--surface" id="interface">
+  <div class="wrap">
+    <div class="head reveal">
+      <p class="eyebrow" data-i18n="ui.eyebrow">Oberfläche</p>
+      <h2 data-i18n="ui.title">Echte Screenshots, kein Rendering</h2>
+      <p data-i18n="ui.lead">Alle Bilder unten sind direkt aus dem laufenden Launcher aufgenommen.</p>
+    </div>
+
+    <div class="tabs" role="tablist" aria-label="Screenshots">
+      <button class="tab" role="tab" aria-selected="true" data-shot="home" data-cap="ui.cap.home">Play</button>
+      <button class="tab" role="tab" aria-selected="false" data-shot="instances" data-cap="ui.cap.instances">Instanzen</button>
+      <button class="tab" role="tab" aria-selected="false" data-shot="client" data-cap="ui.cap.client">Module</button>
+      <button class="tab" role="tab" aria-selected="false" data-shot="hud" data-cap="ui.cap.hud">HUD-Editor</button>
+      <button class="tab" role="tab" aria-selected="false" data-shot="downloads" data-cap="ui.cap.downloads">Downloads</button>
+      <button class="tab" role="tab" aria-selected="false" data-shot="logs" data-cap="ui.cap.logs">Logs</button>
+      <button class="tab" role="tab" aria-selected="false" data-shot="settings" data-cap="ui.cap.settings">Einstellungen</button>
+      <button class="tab" role="tab" aria-selected="false" data-shot="accounts" data-cap="ui.cap.accounts">Profile</button>
+    </div>
+
+    <figure class="shot reveal" style="margin: 0;">
+      <img id="shot-img" src="shots/home.png" width="1420" height="900" alt="Peap Client – Play-Bildschirm mit Instanz, Fortschritt und News">
+      <figcaption class="shot__caption" id="shot-cap" data-i18n="ui.cap.home">Play-Bildschirm: aktive Instanz, laufender Download mit Tempo und Restzeit, Neuigkeiten.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ================= modules ================= -->
+<section class="band" id="modules">
+  <div class="wrap">
+    <div class="head reveal">
+      <p class="eyebrow" data-i18n="mod.eyebrow">Client-Module</p>
+      <h2 data-i18n="mod.title">Was im Spiel sichtbar wird</h2>
+      <p data-i18n="mod.lead">Das HUD läuft als durchklickbares Overlay über dem Spiel. Module, die Werte aus dem Spielinneren brauchen, sind als solche gekennzeichnet.</p>
+    </div>
+
+    <div class="modules">
+      <article class="mod reveal">
+        <div class="mod__tag">HUD</div>
+        <div><h3 data-i18n="m1.t">Uhr, Sitzungsdauer, Spielername</h3><p data-i18n="m1.b">Läuft sofort, ohne Zusatz im Spiel. Position, Größe und Farbe frei einstellbar.</p></div>
+      </article>
+      <article class="mod reveal">
+        <div class="mod__tag">System</div>
+        <div><h3 data-i18n="m2.t">CPU, Arbeitsspeicher, Spielprozess</h3><p data-i18n="m2.b">Der Launcher misst selbst mit und zeigt, was Minecraft gerade belegt.</p></div>
+      </article>
+      <article class="mod reveal">
+        <div class="mod__tag">Performance</div>
+        <div><h3 data-i18n="m3.t">JVM-Feinschliff</h3><p data-i18n="m3.b">Abgestimmte Garbage-Collector-Flags landen wirklich im Startbefehl — nachlesbar im Log.</p></div>
+      </article>
+      <article class="mod reveal">
+        <div class="mod__tag">Netzwerk</div>
+        <div><h3 data-i18n="m4.t">Server-Ping</h3><p data-i18n="m4.b">Antwortzeit und Spielerzahl eines Servers, direkt über das Minecraft-Protokoll abgefragt.</p></div>
+      </article>
+      <article class="mod reveal">
+        <div class="mod__tag">Optik</div>
+        <div><h3 data-i18n="m5.t">HUD-Stil</h3><p data-i18n="m5.b">Schriftgröße, Schatten, Hintergrund und Deckkraft für alle Elemente auf einmal.</p></div>
+      </article>
+      <article class="mod reveal">
+        <div class="mod__tag">Brücke</div>
+        <div><h3 data-i18n="m6.t">FPS, Koordinaten, CPS, Tastenanzeige</h3><p data-i18n="m6.b">Diese Werte kennt nur das Spiel selbst. Die Schnittstelle dafür ist fertig und dokumentiert; ohne Begleit-Mod zeigen die Module ehrlich „keine Daten“ statt erfundener Zahlen.</p></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ================= download ================= -->
+<section class="band band--surface" id="download">
+  <div class="wrap">
+    <div class="head reveal">
+      <p class="eyebrow" data-i18n="dl.eyebrow">Download</p>
+      <h2 data-i18n="dl.title">Kostenlos. Vollständig. Ohne Konto.</h2>
+      <p data-i18n="dl.lead">Kein Bezahlbereich, keine Premium-Stufe, keine Werbung. Der komplette Quelltext liegt dem Projekt bei.</p>
+    </div>
+
+    <div class="dl">
+      <div class="card card--primary reveal">
+        <h3 data-i18n="dl.setup.t">Installer</h3>
+        <p class="card__lead" data-i18n="dl.setup.b">Empfohlen. Legt Startmenü-Eintrag und Verknüpfung an und lässt sich sauber deinstallieren.</p>
+
+        <a class="btn btn--primary btn--lg" id="dl-setup" href="download/PeapClient-Setup.exe" download>
+          <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 3v12m0 0 4.5-4.5M12 15l-4.5-4.5"></path><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"></path>
+          </svg>
+          <span data-i18n="dl.setup.btn">PeapClient-Setup.exe</span>
+          <span class="btn__sub" id="dl-setup-size">78,6 MB</span>
+        </a>
+
+        <ul class="facts">
+          <li><span data-i18n="dl.fact.os">System</span><span>Windows 10 / 11 · x64</span></li>
+          <li><span data-i18n="dl.fact.ver">Version</span><span id="fact-version">1.0.0</span></li>
+          <li><span data-i18n="dl.fact.built">Stand</span><span id="fact-built">—</span></li>
+          <li><span data-i18n="dl.fact.rights">Rechte</span><span data-i18n="dl.fact.rights.v">kein Administrator nötig</span></li>
+        </ul>
+      </div>
+
+      <div class="card reveal">
+        <h3 data-i18n="dl.port.t">Portable Version</h3>
+        <p class="card__lead" data-i18n="dl.port.b">Eine einzelne Datei, die sofort startet. Gut für USB-Sticks oder wenn du nichts installieren willst.</p>
+
+        <a class="btn btn--lg" id="dl-portable" href="download/PeapClient.exe" download>
+          <span data-i18n="dl.port.btn">PeapClient.exe</span>
+          <span class="btn__sub" id="dl-portable-size">78,3 MB</span>
+        </a>
+
+        <ul class="facts">
+          <li><span data-i18n="dl.fact.install">Installation</span><span data-i18n="dl.fact.install.v">keine</span></li>
+          <li><span data-i18n="dl.fact.data">Daten</span><span class="mono">%APPDATA%\PeapClient</span></li>
+          <li><span data-i18n="dl.fact.game">Spielordner</span><span class="mono">%APPDATA%\.peapclient</span></li>
+        </ul>
+
+        <div class="notice" id="dl-hint" hidden>
+          <strong data-i18n="dl.hint.t">Diese Vorschau kann keine Dateien ausliefern.</strong>
+          <p style="margin-top:6px" data-i18n="dl.hint.b">Du siehst gerade die geteilte Web-Vorschau. Die fertigen Dateien liegen in deinem Projektordner — Pfad unten, oder die Seite aus <span class="mono">web/</span> auf einen Webspace legen.</p>
+          <div class="copyrow">
+            <code id="dl-path">C:\Users\…\Desktop\PeapClient\dist\PeapClient-Setup.exe</code>
+            <button class="btn btn--sm" type="button" id="dl-copy" data-i18n="dl.hint.copy">Kopieren</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="notice reveal" style="margin-top: 22px;">
+      <strong data-i18n="dl.smartscreen.t">Hinweis zu Windows SmartScreen</strong>
+      <p style="margin-top:6px" data-i18n="dl.smartscreen.b">Die Dateien sind nicht mit einem kostenpflichtigen Zertifikat signiert. Windows zeigt deshalb beim ersten Start eventuell eine blaue Warnung — über <em>Weitere Informationen</em> → <em>Trotzdem ausführen</em> geht es weiter. Das ist bei unsignierten Programmen normal und sagt nichts über den Inhalt aus.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= faq ================= -->
+<section class="band" id="faq">
+  <div class="wrap">
+    <div class="head reveal">
+      <p class="eyebrow" data-i18n="faq.eyebrow">Fragen</p>
+      <h2 data-i18n="faq.title">Kurz und ehrlich beantwortet</h2>
+    </div>
+
+    <div class="faq">
+      <details class="qa reveal">
+        <summary data-i18n="q1.q">Brauche ich ein Microsoft-Konto?</summary>
+        <div class="qa__body" data-i18n="q1.a">Nein. Ein Offline-Profil reicht für Einzelspieler und LAN. Ein Microsoft-Konto brauchst du nur für Server im Online-Modus — und kannst es jederzeit später hinzufügen.</div>
+      </details>
+
+      <details class="qa reveal">
+        <summary data-i18n="q2.q">Muss ich Minecraft besitzen?</summary>
+        <div class="qa__body" data-i18n="q2.a">Ja. Peap Client ist ein Launcher, kein Ersatz für das Spiel. Ein Offline-Profil überspringt nur den Anmeldeschritt, es schaltet nichts frei, was dir nicht gehört.</div>
+      </details>
+
+      <details class="qa reveal">
+        <summary data-i18n="q3.q">Komme ich mit einem Offline-Profil auf Server?</summary>
+        <div class="qa__body" data-i18n="q3.a">Auf Server im Offline-Modus und im LAN ja. Server im Online-Modus prüfen deine Sitzung bei Mojang — diese Prüfung findet auf dem Server statt, kein Launcher kann daran etwas ändern.</div>
+      </details>
+
+      <details class="qa reveal">
+        <summary data-i18n="q4.q">Was kostet das?</summary>
+        <div class="qa__body" data-i18n="q4.a">Nichts. Es gibt keine Bezahlfunktionen, keine Werbung und keine Konten. Der Quelltext liegt dem Projekt vollständig bei.</div>
+      </details>
+
+      <details class="qa reveal">
+        <summary data-i18n="q5.q">Kann ich Mods benutzen?</summary>
+        <div class="qa__body" data-i18n="q5.a">Ja. Wähle beim Anlegen einer Instanz Fabric, Quilt, Forge oder NeoForge. Jede Instanz hat einen eigenen <span class="mono">mods</span>-Ordner, den du direkt aus dem Launcher öffnen kannst.</div>
+      </details>
+
+      <details class="qa reveal">
+        <summary data-i18n="q6.q">Warum zeigen FPS und Koordinaten nichts an?</summary>
+        <div class="qa__body" data-i18n="q6.a">Diese Werte existieren nur im Spielprozess. Peap Client hat dafür eine dokumentierte lokale Schnittstelle, aber ohne Begleit-Mod bekommt er die Zahlen nicht — und erfindet sie dann auch nicht. Alle anderen HUD-Module laufen ohne Zusatz.</div>
+      </details>
+
+      <details class="qa reveal">
+        <summary data-i18n="q7.q">Wo liegen meine Welten?</summary>
+        <div class="qa__body" data-i18n="q7.a">Jede Instanz bekommt einen eigenen Ordner unter <span class="mono">%APPDATA%\.peapclient\instances</span>. Der Launcher hat in jeder Instanz einen Knopf, der ihn direkt im Explorer öffnet.</div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ================= footer ================= -->
+<footer>
+  <div class="wrap footer__grid">
+    <a class="brand" href="#top">
+      <span class="brand__mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.9" stroke-linejoin="round">
+          <path d="M12 2.6 21 7.4v9.2L12 21.4 3 16.6V7.4Z"></path>
+          <path d="m3 7.4 9 4.8 9-4.8M12 12.2v9.2"></path>
+        </svg>
+      </span>
+      Peap Client
+    </a>
+    <p class="footer__legal" data-i18n="footer.legal">
+      Peap Client ist ein eigenständiges Projekt und steht in keiner Verbindung zu Mojang Studios oder Microsoft.
+      Minecraft ist eine Marke von Mojang Studios. Zum Spielen wird eine eigene Kopie von Minecraft benötigt.
+    </p>
+  </div>
+</footer>
+
+<script>
+(() => {
+  'use strict';
+  document.documentElement.classList.add('js');
+
+  /* ---- language ---------------------------------------------------- */
+
+  const EN = {
+    'nav.features': 'Features', 'nav.interface': 'Interface', 'nav.modules': 'Modules', 'nav.faq': 'FAQ',
+    'nav.download': 'Download',
+    'hero.eyebrow': 'Free · Windows 10 / 11 · Version 1.0.0',
+    'hero.title1': 'One launcher.', 'hero.title2': 'No login.',
+    'hero.lead': 'Peap Client installs Minecraft, takes care of Java and starts the game — without a Microsoft sign-in, without an account, without a subscription. Type a name, pick a version, play.',
+    'hero.cta': 'Download setup', 'hero.cta2': 'See the interface',
+    'hero.badge': 'No account needed',
+    'hero.note': '64-bit · no Node.js required · full source included',
+    'stat.files': 'files fetched on first launch',
+    'stat.time': 'for 700 MB, measured on 1.20.1',
+    'stat.verify': 'every file checked, broken ones refetched',
+    'stat.deps': 'third-party runtime packages in the launcher',
+    'steps.eyebrow': 'Three steps', 'steps.title': 'From download into the world',
+    'steps.lead': 'No account to create, no Java install to hunt down, no config file to touch.',
+    'step1.title': 'Open the setup',
+    'step1.body': 'Double-click PeapClient-Setup.exe. The installer sets up the launcher, creates shortcuts and starts it.',
+    'step2.title': 'Pick a name',
+    'step2.body': 'The launcher suggests your Windows name. One click on Play as … — that was the entire sign-in.',
+    'step3.title': 'Pick a version, play',
+    'step3.body': 'Choose a Minecraft version and loader, press Play. Files, Java and the launch are handled for you.',
+    'feat.eyebrow': "What's inside", 'feat.title': 'A complete client, not a start button',
+    'feat.lead': 'Everything a launcher should take off your hands — plus a client side that shows up in game.',
+    'f1.t': 'Play without signing in',
+    'f1.b': 'An offline profile covers single player and LAN. A Microsoft account can be added any time later.',
+    'f2.t': 'Java handles itself',
+    'f2.b': 'The launcher finds installed Java versions and fetches the right one — 1.8 needs a different one than 1.21.',
+    'f3.t': 'Every major loader',
+    'f3.b': 'Vanilla, Fabric, Quilt, Forge and NeoForge. Forge and NeoForge are set up with their official installers.',
+    'f4.t': 'A download manager that behaves',
+    'f4.b': 'Speed, time left, cancel, automatic retry on dropped connections and a SHA-1 check on every file.',
+    'f5.t': 'Drag-and-drop HUD editor',
+    'f5.b': 'Move, scale, show and hide elements. Save several layouts and switch between them.',
+    'f6.t': 'Modules with real switches',
+    'f6.b': 'Performance, HUD, visuals, comfort and navigation. Every module toggles on its own and keeps its settings.',
+    'f7.t': 'Logs and crash reading',
+    'f7.b': 'The game log lives in the launcher, and exit codes are translated into plain causes instead of hex numbers.',
+    'f8.t': 'Sessions stored safely',
+    'f8.b': 'If you do sign in: tokens are encrypted through Windows DPAPI, never written in clear text.',
+    'f9.t': 'Separate instances',
+    'f9.b': 'Each profile gets its own game folder, memory limit and JVM arguments. Mods stay where they belong.',
+    'ui.eyebrow': 'Interface', 'ui.title': 'Real screenshots, not renderings',
+    'ui.lead': 'Every image below was captured from the running launcher.',
+    'ui.cap.home': 'Play screen: active instance, live download with speed and time left, news.',
+    'ui.cap.instances': 'Instances: version, loader, memory and playtime per profile.',
+    'ui.cap.client': 'Modules: categories, switches and per-module settings.',
+    'ui.cap.hud': 'HUD editor: drag elements, scale them, save several layouts.',
+    'ui.cap.downloads': 'Downloads: progress, speed, time left, history and cache.',
+    'ui.cap.logs': 'Logs: launcher, auth, downloads, game and errors — filterable.',
+    'ui.cap.settings': 'Settings: game folder, Java, memory, JVM arguments, interface.',
+    'ui.cap.accounts': 'Profiles: an offline profile in one click, Microsoft optional.',
+    'mod.eyebrow': 'Client modules', 'mod.title': 'What shows up in game',
+    'mod.lead': 'The HUD runs as a click-through overlay above the game. Modules that need values from inside the game are marked as such.',
+    'm1.t': 'Clock, session time, player tag', 'm1.b': 'Works right away, nothing extra needed in game. Position, size and colour are yours.',
+    'm2.t': 'CPU, memory, game process', 'm2.b': 'The launcher measures it itself and shows what Minecraft is using.',
+    'm3.t': 'JVM tuning', 'm3.b': 'Tuned garbage collector flags really land in the launch command — you can read them back in the log.',
+    'm4.t': 'Server ping', 'm4.b': 'Response time and player count of a server, asked over the Minecraft protocol itself.',
+    'm5.t': 'HUD styling', 'm5.b': 'Font size, shadow, background and opacity for every element at once.',
+    'm6.t': 'FPS, coordinates, CPS, keystrokes',
+    'm6.b': 'Only the game knows these. The interface for them is finished and documented; without a companion mod the modules honestly say “no data” instead of inventing numbers.',
+    'dl.eyebrow': 'Download', 'dl.title': 'Free. Complete. No account.',
+    'dl.lead': 'No paywall, no premium tier, no ads. The full source ships with the project.',
+    'dl.setup.t': 'Installer', 'dl.setup.b': 'Recommended. Adds a start menu entry and a shortcut, and uninstalls cleanly.',
+    'dl.setup.btn': 'PeapClient-Setup.exe',
+    'dl.fact.os': 'System', 'dl.fact.ver': 'Version', 'dl.fact.built': 'Built',
+    'dl.fact.rights': 'Rights', 'dl.fact.rights.v': 'no administrator needed',
+    'dl.port.t': 'Portable build', 'dl.port.b': 'A single file that runs straight away. Good for a USB stick, or when you do not want to install anything.',
+    'dl.port.btn': 'PeapClient.exe',
+    'dl.fact.install': 'Install', 'dl.fact.install.v': 'none',
+    'dl.fact.data': 'Data', 'dl.fact.game': 'Game folder',
+    'dl.hint.t': 'This preview cannot serve files.',
+    'dl.hint.b': 'You are looking at the shared web preview. The finished files are in your project folder — path below, or put the page from web/ on any web host.',
+    'dl.hint.copy': 'Copy',
+    'dl.smartscreen.t': 'About the Windows SmartScreen warning',
+    'dl.smartscreen.b': 'The files are not signed with a paid certificate, so Windows may show a blue warning on first run — More info → Run anyway continues. That is normal for unsigned programs and says nothing about the contents.',
+    'faq.eyebrow': 'Questions', 'faq.title': 'Answered short and straight',
+    'q1.q': 'Do I need a Microsoft account?',
+    'q1.a': 'No. An offline profile covers single player and LAN. A Microsoft account is only needed for online-mode servers, and you can add one at any time.',
+    'q2.q': 'Do I need to own Minecraft?',
+    'q2.a': 'Yes. Peap Client is a launcher, not a replacement for the game. An offline profile only skips the sign-in step; it does not unlock anything that is not yours.',
+    'q3.q': 'Can I join servers with an offline profile?',
+    'q3.a': 'Offline-mode servers and LAN, yes. Online-mode servers verify your session with Mojang — that check happens on the server, and no launcher can change it.',
+    'q4.q': 'What does it cost?',
+    'q4.a': 'Nothing. There are no paid features, no ads and no accounts. The full source ships with the project.',
+    'q5.q': 'Can I use mods?',
+    'q5.a': 'Yes. Pick Fabric, Quilt, Forge or NeoForge when you create an instance. Every instance has its own mods folder, openable straight from the launcher.',
+    'q6.q': 'Why do FPS and coordinates show nothing?',
+    'q6.a': 'Those values only exist inside the game process. Peap Client has a documented local interface for them, but without a companion mod it does not get the numbers — and does not invent them either. Every other HUD module works without any add-on.',
+    'q7.q': 'Where are my worlds?',
+    'q7.a': 'Each instance gets its own folder under %APPDATA%\\.peapclient\\instances. Every instance has a button that opens it in Explorer.',
+    'footer.legal': 'Peap Client is an independent project and is not associated with Mojang Studios or Microsoft. Minecraft is a trademark of Mojang Studios. You need your own copy of Minecraft to play.'
+  };
+
+  // File sizes are written in the reader's number format, so they are kept as
+  // raw byte counts and re-rendered whenever the language changes.
+  const sizeTargets = [];
+  const renderSizes = () => sizeTargets.forEach(([node, bytes]) => { node.textContent = prettyBytes(bytes); });
+
+  const nodes = Array.from(document.querySelectorAll('[data-i18n]'));
+  const german = new Map(nodes.map((node) => [node, node.innerHTML]));
+  const deBtn = document.getElementById('lang-de');
+  const enBtn = document.getElementById('lang-en');
+  let lang = 'de';
+
+  function applyLanguage(next) {
+    lang = next === 'en' ? 'en' : 'de';
+    for (const node of nodes) {
+      const key = node.getAttribute('data-i18n');
+      if (lang === 'de') node.innerHTML = german.get(node);
+      else if (EN[key]) node.textContent = EN[key];
+    }
+    document.documentElement.lang = lang;
+    renderSizes();
+    deBtn.setAttribute('aria-pressed', String(lang === 'de'));
+    enBtn.setAttribute('aria-pressed', String(lang === 'en'));
+    try { localStorage.setItem('peap.lang', lang); } catch { /* private mode */ }
+  }
+
+  deBtn.addEventListener('click', () => applyLanguage('de'));
+  enBtn.addEventListener('click', () => applyLanguage('en'));
+
+  try {
+    const saved = localStorage.getItem('peap.lang');
+    if (saved === 'en') applyLanguage('en');
+    else if (!saved && !navigator.language.toLowerCase().startsWith('de')) applyLanguage('en');
+  } catch { /* private mode */ }
+
+  /* ---- sticky bar -------------------------------------------------- */
+
+  const topbar = document.getElementById('topbar');
+  const onScroll = () => topbar.setAttribute('data-stuck', String(window.scrollY > 12));
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  /* ---- reveal on scroll -------------------------------------------- */
+
+  const revealables = Array.from(document.querySelectorAll('.reveal'));
+  const revealAll = () => revealables.forEach((el) => el.classList.add('in'));
+
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry, index) => {
+        if (!entry.isIntersecting) return;
+        entry.target.style.transitionDelay = Math.min(index * 55, 220) + 'ms';
+        entry.target.classList.add('in');
+        observer.unobserve(entry.target);
+      });
+    }, { rootMargin: '0px 0px -8% 0px', threshold: 0.08 });
+    revealables.forEach((el) => observer.observe(el));
+
+    // A fade that never fires would hide the page. If anything is still
+    // waiting after a moment - throttled tab, no animation frames, an odd
+    // viewport - show it all rather than leave a blank section behind.
+    setTimeout(revealAll, 2500);
+    window.addEventListener('beforeprint', revealAll);
+  } else {
+    revealAll();
+  }
+
+  /* ---- counters ---------------------------------------------------- */
+
+  const format = (value) => (lang === 'de' ? value.toLocaleString('de-DE') : value.toLocaleString('en-GB'));
+  document.querySelectorAll('[data-count]').forEach((el) => {
+    const target = Number(el.getAttribute('data-count'));
+    if (!Number.isFinite(target) || target === 0) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    let started = false;
+    const run = () => {
+      if (started) return;
+      started = true;
+      const duration = 1100;
+      const startedAt = performance.now();
+      const tick = (now) => {
+        const progress = Math.min(1, (now - startedAt) / duration);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        el.textContent = format(Math.round(target * eased));
+        if (progress < 1) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    };
+
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver((entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) { run(); io.disconnect(); }
+      }, { threshold: 0.4 });
+      io.observe(el);
+    } else run();
+  });
+
+  /* ---- screenshot tabs --------------------------------------------- */
+
+  const DE_CAPTIONS = {
+    'ui.cap.home': 'Play-Bildschirm: aktive Instanz, laufender Download mit Tempo und Restzeit, Neuigkeiten.',
+    'ui.cap.instances': 'Instanzen: Version, Loader, Arbeitsspeicher und Spielzeit je Profil.',
+    'ui.cap.client': 'Module: Kategorien, Schalter und Einstellungen pro Modul.',
+    'ui.cap.hud': 'HUD-Editor: Elemente ziehen, skalieren, mehrere Layouts speichern.',
+    'ui.cap.downloads': 'Downloads: Fortschritt, Tempo, Restzeit, Verlauf und Cache.',
+    'ui.cap.logs': 'Logs: Launcher, Anmeldung, Downloads, Spiel und Fehler — filterbar.',
+    'ui.cap.settings': 'Einstellungen: Spielordner, Java, Arbeitsspeicher, JVM-Argumente, Oberfläche.',
+    'ui.cap.accounts': 'Profile: Offline-Profil mit einem Klick, Microsoft optional.'
+  };
+
+  const shotImg = document.getElementById('shot-img');
+  const shotCap = document.getElementById('shot-cap');
+  document.querySelectorAll('.tab').forEach((tab) => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach((other) => other.setAttribute('aria-selected', 'false'));
+      tab.setAttribute('aria-selected', 'true');
+
+      const name = tab.getAttribute('data-shot');
+      const capKey = tab.getAttribute('data-cap');
+      shotImg.src = 'shots/' + name + '.png';
+      shotImg.alt = 'Peap Client – ' + tab.textContent.trim();
+      shotCap.setAttribute('data-i18n', capKey);
+      shotCap.textContent = (lang === 'en' ? EN[capKey] : DE_CAPTIONS[capKey]) || shotCap.textContent;
+      german.set(shotCap, DE_CAPTIONS[capKey] || shotCap.textContent);
+
+      shotImg.classList.remove('is-swapping');
+      void shotImg.offsetWidth;
+      shotImg.classList.add('is-swapping');
+    });
+  });
+
+  /* ---- download availability --------------------------------------- */
+
+  const setupLink = document.getElementById('dl-setup');
+  const portableLink = document.getElementById('dl-portable');
+  const hint = document.getElementById('dl-hint');
+
+  const prettyBytes = (bytes) => (bytes / 1048576).toLocaleString(lang === 'de' ? 'de-DE' : 'en-GB', { maximumFractionDigits: 1 }) + ' MB';
+
+  async function probe(url) {
+    try {
+      const response = await fetch(url, { method: 'HEAD' });
+      if (!response.ok) return null;
+      const length = Number(response.headers.get('content-length'));
+      return Number.isFinite(length) && length > 0 ? length : 0;
+    } catch {
+      return null;
+    }
+  }
+
+  (async () => {
+    // Opened straight from disk: HEAD requests are not answered over file://,
+    // but the links themselves resolve, so leave them alone.
+    if (location.protocol === 'file:') return;
+
+    const [setupBytes, portableBytes] = await Promise.all([
+      probe(setupLink.getAttribute('href')),
+      probe(portableLink.getAttribute('href'))
+    ]);
+
+    if (setupBytes === null && portableBytes === null) {
+      // Nothing to serve here - say so instead of offering a dead button.
+      hint.hidden = false;
+      for (const link of [setupLink, portableLink]) {
+        link.removeAttribute('download');
+        link.setAttribute('href', '#download');
+        link.addEventListener('click', (event) => {
+          event.preventDefault();
+          hint.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        });
+      }
+      return;
+    }
+
+    if (setupBytes) {
+      sizeTargets.push([document.getElementById('dl-setup-size'), setupBytes]);
+      sizeTargets.push([document.getElementById('hero-size'), setupBytes]);
+    }
+    if (portableBytes) sizeTargets.push([document.getElementById('dl-portable-size'), portableBytes]);
+    renderSizes();
+  })();
+
+  const copyButton = document.getElementById('dl-copy');
+  copyButton.addEventListener('click', async () => {
+    const text = document.getElementById('dl-path').textContent.trim();
+    const done = () => {
+      const before = copyButton.textContent;
+      copyButton.textContent = lang === 'de' ? 'Kopiert' : 'Copied';
+      setTimeout(() => { copyButton.textContent = before; }, 1600);
+    };
+    try {
+      await navigator.clipboard.writeText(text);
+      done();
+    } catch {
+      const range = document.createRange();
+      range.selectNodeContents(document.getElementById('dl-path'));
+      const selection = window.getSelection();
+      selection.removeAllRanges();
+      selection.addRange(range);
+    }
+  });
+
+  /* ---- build stamp ------------------------------------------------- */
+
+  const stamp = window.PEAP_BUILD;
+  if (stamp) {
+    if (stamp.version) document.getElementById('fact-version').textContent = stamp.version;
+    if (stamp.builtAt) {
+      const date = new Date(stamp.builtAt);
+      document.getElementById('fact-built').textContent = date.toLocaleDateString(lang === 'de' ? 'de-DE' : 'en-GB', {
+        day: '2-digit', month: 'short', year: 'numeric'
+      });
+    }
+    if (stamp.setupPath) document.getElementById('dl-path').textContent = stamp.setupPath;
+  } else {
+    document.getElementById('fact-built').textContent = '—';
+  }
+})();
+</script>
+
+</body>
+</html>
